@@ -1,9 +1,8 @@
 <?php
 	include_once '/lib/config.php';
 	include_once '/lib/functions.php';
-	$h = new CarShopServer();
 
-//	 brand, model, year, motor, speed, color, price'
+//$h = new CarShopServer();
 
 //	$res = $h->getCarList();
 //	$res = $h->getCarDetails('2');
@@ -17,6 +16,7 @@
 //		'price' => '22363.3'
 	);
 
+//	dump($res);
 	$order = array(
 		'id_car' => '2',
 		'uname' => 'Valerka',
@@ -25,12 +25,13 @@
 	);
 	$order2 = ['2', 'Valera', 'Pupin', 'cash'];
 
-	$h->addOrder($order);
-//	$res = $h->getCarsByParameters($params);
-//	dump($res);
+	ini_set('soap.wsdl_cache_ebabled','0');
 
-	$id = '3';
-	$res = $h->getCarDetails($encoded);
-	dump($res);
+
+$serv = new SoapServer('CarShop.wsdl');
+$serv->setClass('CarShopServer');
+$serv->handle();
+
+
 
 ?>

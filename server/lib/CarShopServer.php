@@ -20,21 +20,20 @@ class CarShopServer
 		$res = $this->db->select()->setTable('cars')->setColumns('id, brand, model')->exec();
 		if($res)
 		{
-			return $res;// returnim uje json
-//			return $this->convertToJson($res);// returnim uje json
+			return $res;
 		}
 		return $res;
 	}
 
 	public function getCarDetails($id)
 	{
-//		$id = $this->parseJson($id);
 		$res = [];
 		$id = $this->db->clearString($id);
-		$res = $this->db->select()->setTable('cars')->setColumns('id, brand, model, year, motor, speed, color, price')->setWhere("id = $id")->exec();
+		$res = $this->db->select()->setTable('cars')->setColumns('model, year, motor, color, speed, price')->setWhere("id = $id")->exec();
+//		'id, brand, model, year, motor, speed, color, price'
 		if($res)
 		{
-			return $res; //returnim uje json
+			return $res;
 		}
 		return $res;
 	}
@@ -62,16 +61,6 @@ class CarShopServer
 		}
 		return false; // msg unfortunately
 	}
-
-//	private function convertToJson(array $arr)
-//	{
-//		return json_encode($arr, JSON_NUMERIC_CHECK);
-//	}
-//
-//	private function parseJson($string)
-//	{
-//		return json_decode($string, true);
-//	}
 
 	private function makeWhereString($arr)
 	{
