@@ -33,6 +33,30 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+                 <!-- элемент содержащий типы Машина -->
+            <xs:element name="getCarsByParametersResponseArray">
+                <xs:complexType name="AllDetails">
+                    <xs:sequence>
+                        <xs:element minOccurs="1" maxOccurs="unbounded" name="cars" type="AllDetailsResponse"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <!-- тип Детайлс для ответа -->
+        <xs:element name="AllDetailsResponse">
+            <xs:complexType name="Details">
+                <xs:sequence>
+                    <xs:element name='id' type="xs:string"/>
+                    <xs:element name='model' type="xs:string"/>
+                    <xs:element name='brand' type="xs:string"/>
+                    <xs:element name='year' type="xs:string"/>
+                    <xs:element name='motor' type="xs:string"/>
+                    <xs:element name='color' type="xs:string"/>
+                    <xs:element name='speed' type="xs:string"/>
+                    <xs:element name='price' type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
 
             <!-- тип Детайлс для ответа -->
         <xs:element name="DetailsResponse">
@@ -71,6 +95,16 @@
         <part name="resDetails" element="tns:DetailsResponse" />
     </message>
 
+    <!-- getCarsByParameters  // принимает массив -->
+    <message name="getCarsByParametersRequest">
+        <part name='reqGetCarsByParameters' element='tns:DetailsResponse' />
+    </message>
+
+    <!-- getCarsByParameters  // отправляет элемент DetailsResponse -->
+    <message name="getCarsByParametersResponse">
+        <part name="resGetCarsByParameters" element="tns:getCarsByParametersResponseArray" />
+    </message>
+
 
     <!-- привязка входящих и исходящих сообщений -->
     <portType name="CarShopPortType">
@@ -89,6 +123,14 @@
             <input message="tns:getCarDetailsRequest" />
             <!-- отправляет -->
             <output message="tns:getCarDetailsResponse" />
+        </operation>
+
+        <!-- функция getCarsByParameters-->
+        <operation name="getCarsByParameters">
+            <!-- принимает -->
+            <input message="tns:getCarsByParametersRequest" />
+            <!-- отправляет -->
+            <output message="tns:getCarsByParametersResponse" />
         </operation>
 
     </portType>
@@ -110,6 +152,17 @@
 
         <!--  -->
         <operation name="getCarDetails">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+        </operation>
+
+        <!--  -->
+        <operation name="getCarsByParameters">
             <soap:operation soapAction="" />
             <input>
                 <soap:body use="literal" />

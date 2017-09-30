@@ -20,7 +20,19 @@ class CarShopServer
 		$res = $this->db->select()->setTable('cars')->setColumns('id, brand, model')->exec();
 		if($res)
 		{
-			return $res;
+//			return $res;
+			$result = new \ArrayObject();
+			foreach($res as $item)
+			{
+				$obj = new stdClass();
+				$obj->id = $item['id'];
+				$obj->brand = $item['brand'];
+				$obj->model = $item['model'];
+				$car = new \SoapVar($obj, SOAP_ENC_OBJECT, null, null, 'CarList');
+				$result->append($car);
+			}
+			return $result;
+
 		}
 		return $res;
 	}
@@ -33,7 +45,21 @@ class CarShopServer
 //		'id, brand, model, year, motor, speed, color, price'
 		if($res)
 		{
-			return $res;
+//			return $res;
+			$result = new \ArrayObject();
+			foreach($res as $item)
+			{
+				$obj = new stdClass();
+				$obj->model = $item['model'];
+				$obj->year = $item['year'];
+				$obj->motor = $item['motor'];
+				$obj->color = $item['color'];
+				$obj->speed = $item['speed'];
+				$obj->price = $item['price'];
+				$car = new \SoapVar($obj, SOAP_ENC_OBJECT, null, null, 'Details');
+				$result->append($car);
+			}
+			return $result;
 		}
 		return $res;
 	}
@@ -47,7 +73,8 @@ class CarShopServer
 		$res = $this->db->select()->setTable('cars')->setColumns('id, brand, model, year, motor, speed, color, price')->setWhere($where)->exec();
 		if($res)
 		{
-			return $res; //returnim uje json
+//			return $res;
+			
 		}
 		return $res;
 	}
@@ -103,4 +130,6 @@ class CarShopServer
 		}
 		return $cleared;
 	}
+
+
 }
