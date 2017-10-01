@@ -19,7 +19,6 @@ class Db extends Sql
 	{
 		parent::exec();
 		dump($this->query);
-//			exit();
 		switch ($this->queryType)
 		{
 			case 'insert':
@@ -34,7 +33,7 @@ class Db extends Sql
 				{
 					return true;
 				}
-				return talse;
+				return false;
             case 'select':
                 $result = array();
 				$stmt = $this->pdo->query($this->query);

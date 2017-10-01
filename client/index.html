@@ -1,0 +1,77 @@
+<html>
+	<head>
+		<title>Carshop Service Client</title>
+		<meta charset="UTF-8">
+		<link href="css/style.css" rel="stylesheet" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+	</head>
+	<body>
+		<div class="menu">
+			<div class="row">
+				<button onclick="ph.getAllCars()" class="showAllCars">Show All Cars</button>
+					<div class="search-by-params">
+					<label for="search"><b>Search by parametres</b></label>
+						<table>
+							<tr>
+								<td>Year created:</td>
+								<td><input id="year" placeholder="2010" type="text"></td>
+								<td>required</td>
+							</tr>
+							<tr>
+								<td>Model:</td>
+								<td><input id="model" placeholder="x5" type="text"></td>
+							</tr>
+							<tr>
+								<td>Capacity:</td>
+								<td><input id="motor" placeholder="3.20" type="text"></td>
+							</tr>
+							<tr>
+								<td>Color:</td>
+								<td><input id="color" placeholder="white" type="text"></td>
+							</tr>
+							<tr>
+								<td>Max speed:</td><td><input id="speed" placeholder="230" type="text"></td>
+							</tr>
+							<tr>
+								<td>Price:</td>
+								<td><input id="price" placeholder="88652.21" type="text"></td>
+							</tr>
+								<tr>
+									<td><button onclick="ph.searchByParameters()" class="search">Search</button></td>
+								</tr>
+						</table>
+						<span id="searchMsg"></span> 
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<span class="msg"></span>
+		<div class="content"></div>
+		<div class="order-form">
+			<label class="lbl" for="">Pre-order form:</label>
+			<div >	
+				<table class="order">
+					<tr>
+						<td><label for="">First name:</label></td>
+						<td><input type="text" id="name" /></td>
+					</tr>
+					<tr>
+						<td><label for="">Last name:</label></td>
+						<td><input type="text" id="lname" /></td>
+					</tr>
+					<tr>
+						<td><label for="">Payment method:</label></td>
+						<td><input type="text" id="payment" /></td>
+						<td><span>"cash" or "creditCard"</span></td>
+					</tr>
+					<tr>
+						<td><button onclick="ph.addOrder()">Order</button></td>
+					</tr>
+				</table>
+			</div>
+				<span id="errMsg"></span>
+		</div>
+		<script  src="lib/pageHandler.js"></script>
+	</body>
+</html>

@@ -10,13 +10,11 @@
              name="CarShop"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
-             <!-- описание типов данных по схеме -->
+             <!-- types  declaration-->
     <types>
         <xs:schema elementFormDefault="qualified"
-                   targetNamespace="http://10.20.12.254/~user13/carshopServer/">
-            <!-- сами типы -->
+                   targetNamespace="http://localhost/public_html/MYPHP/soap2/server/">
 
-            <!-- тип Машина (это массив строки из бд, в запросе где только 3 поля выбирается) -->
             <xs:complexType name="Car">
                 <xs:sequence>
                     <xs:element name="id" type="xs:string"/>
@@ -25,49 +23,61 @@
                 </xs:sequence>
             </xs:complexType>
 
-                 <!-- элемент содержащий типы Машина -->
-            <xs:element name="getCarListResponse">
+            <xs:element name="CarListResponse">
                 <xs:complexType name="CarList">
                     <xs:sequence>
                         <xs:element minOccurs="1" maxOccurs="unbounded" name="cars" type="Car"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-                 <!-- элемент содержащий типы Машина -->
+
             <xs:element name="getCarsByParametersResponseArray">
-                <xs:complexType name="AllDetails">
+                <xs:complexType name="AllDetailsList">
                     <xs:sequence>
-                        <xs:element minOccurs="1" maxOccurs="unbounded" name="cars" type="AllDetailsResponse"/>
+                        <xs:element minOccurs="1" maxOccurs="unbounded" name="cars" type="AllDetails"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
 
-            <!-- тип Детайлс для ответа -->
-        <xs:element name="AllDetailsResponse">
             <xs:complexType name="Details">
-                <xs:sequence>
+                <xs:all>
                     <xs:element name='id' type="xs:string"/>
                     <xs:element name='model' type="xs:string"/>
-                    <xs:element name='brand' type="xs:string"/>
                     <xs:element name='year' type="xs:string"/>
                     <xs:element name='motor' type="xs:string"/>
                     <xs:element name='color' type="xs:string"/>
-                    <xs:element name='speed' type="xs:string"/>
+                    <xs:element name='speed'  type="xs:string"/>
                     <xs:element name='price' type="xs:string"/>
+                </xs:all>
+            </xs:complexType>
+
+        <xs:simpleType name="Payment">
+            <xs:restriction base="string">
+                <xs:enumeration value="cash"/>
+                <xs:enumeration value="creditCard"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:element name="OrderDataObject">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element name='idCar' type="xs:string"/>
+                    <xs:element name='uname' type="xs:string"/>
+                    <xs:element name='ulname' type="xs:string"/>
+                    <xs:element name='payment' type="Payment"/>
                 </xs:sequence>
             </xs:complexType>
         </xs:element>
 
-            <!-- тип Детайлс для ответа -->
-        <xs:element name="DetailsResponse">
+        <xs:element name="DetailsObject">
             <xs:complexType name="Details">
                 <xs:sequence>
-                    <xs:element name='model' type="xs:string"/>
-                    <xs:element name='year' type="xs:string"/>
-                    <xs:element name='motor' type="xs:string"/>
-                    <xs:element name='color' type="xs:string"/>
-                    <xs:element name='speed' type="xs:string"/>
-                    <xs:element name='price' type="xs:string"/>
+                    <xs:element name='model' minOccurs="0" type="xs:string"/>
+                    <xs:element name='year'  minOccurs="1" type="xs:string"/>
+                    <xs:element name='motor' minOccurs="0" type="xs:string"/>
+                    <xs:element name='color' minOccurs="0" type="xs:string"/>
+                    <xs:element name='speed' minOccurs="0" type="xs:string"/>
+                    <xs:element name='price' minOccurs="0" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
         </xs:element>
@@ -75,71 +85,68 @@
         </xs:schema>
     </types>
 
-    <!-- getCarList //ничего не принимает -->
+    <!-- message type declaration -->
     <message name="getCarListRequest">
     </message>
 
-    <!-- getCarList //отправляет элемент  getCarListResponse-->
     <message name="getCarListResponse">
-        <part name="resCarList" element="tns:getCarListResponse" />
+        <part name="CarListResponse" element="tns:CarListResponse"/>
     </message>
 
-
-    <!-- getCarDetails  // принимает строку -->
     <message name="getCarDetailsRequest">
-        <part name='id_car' type='xs:string' element='xs:string' />
+        <part name='carId' type='xs:string' />
     </message>
 
-    <!-- getCarDetails  // отправляет элемент DetailsResponse -->
     <message name="getCarDetailsResponse">
-        <part name="resDetails" element="tns:DetailsResponse" />
+        <part name="CarDetailsResponse" element="tns:DetailsResponse" />
     </message>
 
-    <!-- getCarsByParameters  // принимает массив -->
     <message name="getCarsByParametersRequest">
-        <part name='reqGetCarsByParameters' element='tns:DetailsResponse' />
+        <part name='reqGetCarsByParameters' element="tns:DetailsObject" />
     </message>
 
-    <!-- getCarsByParameters  // отправляет элемент DetailsResponse -->
     <message name="getCarsByParametersResponse">
         <part name="resGetCarsByParameters" element="tns:getCarsByParametersResponseArray" />
     </message>
 
+    <message name="addOrderRequest">
+        <part name='objOrderData' element="tns:OrderDataObject" />
+    </message>
 
-    <!-- привязка входящих и исходящих сообщений -->
+    <message name="addOrderResponse">
+        <part name="status"  type="xs:boolean" />
+    </message>
+
+
+    <!-- operation message declaration -->
     <portType name="CarShopPortType">
 
-            <!-- функция getCarList-->
         <operation name="getCarList">
-            <!-- принимает -->
             <input message="tns:getCarListRequest" />
-            <!-- отправляет -->
             <output message="tns:getCarListResponse" />
         </operation>
 
-        <!-- функция getCarDetails-->
         <operation name="getCarDetails">
-            <!-- принимает -->
             <input message="tns:getCarDetailsRequest" />
-            <!-- отправляет -->
             <output message="tns:getCarDetailsResponse" />
         </operation>
 
-        <!-- функция getCarsByParameters-->
         <operation name="getCarsByParameters">
-            <!-- принимает -->
             <input message="tns:getCarsByParametersRequest" />
-            <!-- отправляет -->
             <output message="tns:getCarsByParametersResponse" />
+        </operation>
+
+        <operation name="addOrder">
+            <input message="tns:addOrderRequest" />
+            <output message="tns:addOrderResponse" />
         </operation>
 
     </portType>
 
-    <!-- Перечисление функций и типов сообщений -->
+    <!-- Service operations declaration -->
     <binding name="CarShopBinding" type="tns:CarShopPortType">
         <soap:binding style='rpc' transport="http://schemas.xmlsoap.org/soap/http" />
 
-        <!--  -->
         <operation name="getCarList">
             <soap:operation soapAction="" />
             <input>
@@ -150,7 +157,6 @@
             </output>
         </operation>
 
-        <!--  -->
         <operation name="getCarDetails">
             <soap:operation soapAction="" />
             <input>
@@ -161,8 +167,17 @@
             </output>
         </operation>
 
-        <!--  -->
         <operation name="getCarsByParameters">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+        </operation>
+
+        <operation name="addOrder">
             <soap:operation soapAction="" />
             <input>
                 <soap:body use="literal" />
@@ -173,7 +188,7 @@
         </operation>
     </binding>
 
-    <!-- Название сервиса, определение порта и расположения -->
+    <!-- service declaration -->
     <service name="CarShop">
         <port name="CarShopPort" binding="tns:CarShopBinding">
             <soap:address location="http://localhost/public_html/MYPHP/soap2/server/index.php" />

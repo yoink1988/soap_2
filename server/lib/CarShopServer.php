@@ -15,92 +15,83 @@ class CarShopServer
 
 	public function getCarList()
 	{
-
-		$res = [];
 		$res = $this->db->select()->setTable('cars')->setColumns('id, brand, model')->exec();
-		if($res)
+		if(!empty($res))
 		{
-//			return $res;
-			$result = new \ArrayObject();
+			$result = new \stdClass();
 			foreach($res as $item)
 			{
-				$obj = new stdClass();
-				$obj->id = $item['id'];
-				$obj->brand = $item['brand'];
-				$obj->model = $item['model'];
-				$car = new \SoapVar($obj, SOAP_ENC_OBJECT, null, null, 'CarList');
-				$result->append($car);
+				$car = new \SoapVar((object)$item, SOAP_ENC_OBJECT, null, null, 'CarList');
+				$result->cars[] = $car;
 			}
-			return $result;
-
 		}
-		return $res;
+		else
+		{
+			throw new SoapFault('Server','Sorry, try again later');
+		}
+		return $result;
 	}
 
 	public function getCarDetails($id)
 	{
-		$res = [];
 		$id = $this->db->clearString($id);
-		$res = $this->db->select()->setTable('cars')->setColumns('model, year, motor, color, speed, price')->setWhere("id = $id")->exec();
-//		'id, brand, model, year, motor, speed, color, price'
+		$res = $this->db->select()->setTable('cars')->setColumns('id, model, year, motor, color, speed, price')->setWhere("id = $id")->exec();
 		if($res)
 		{
-//			return $res;
-			$result = new \ArrayObject();
+			$result = new \stdClass();
 			foreach($res as $item)
 			{
-				$obj = new stdClass();
-				$obj->model = $item['model'];
-				$obj->year = $item['year'];
-				$obj->motor = $item['motor'];
-				$obj->color = $item['color'];
-				$obj->speed = $item['speed'];
-				$obj->price = $item['price'];
-				$car = new \SoapVar($obj, SOAP_ENC_OBJECT, null, null, 'Details');
-				$result->append($car);
+				$propery = new \SoapVar((object)$item, SOAP_ENC_OBJECT, null, null);
+				$result->DetailsResponse[] = $propery;
 			}
-			return $result;
 		}
-		return $res;
+		else
+		{
+			throw new SoapFault('Server','Car not found');
+		}
+		return $result;
 	}
 
-	public function getCarsByParameters($arr)
+	public function getCarsByParameters(stdClass $arr)
 	{
-		//to do
-		//proverka na prisutstvie goda v massive
-		$res = [];
-		$where = $this->makeWhereString($arr);
+		$where = $this->makeWhereString((array)$arr);
 		$res = $this->db->select()->setTable('cars')->setColumns('id, brand, model, year, motor, speed, color, price')->setWhere($where)->exec();
 		if($res)
 		{
-//			return $res;
-			
+			$result = new \StdClass();
+			foreach($res as $item)
+			{
+				$car = new \SoapVar((object)$item, SOAP_ENC_OBJECT, null, null, 'car');
+				$result->cars[] = $car;
+			}
 		}
-		return $res;
+		else
+		{
+			throw new SoapFault('Server', 'No cars found with this parametres');
+		}
+		return $result;
 	}
 
 	public function addOrder($arr)
 	{
-		$params = $this->clearArr($arr);
+		if(($arr->payment != 'cash') && ($arr->payment != 'creditCard'))
+		{
+			throw new SoapFault('Server', 'Payment type should be "cash" or "creditCard".');
+		}
+		$params = $this->clearArr((array)$arr);
 		if($this->db->insert()->setTable('orders')->setColumns('id_car, uname, ulastname, payment')->setParams($params)->exec())
 		{
-			return true; // msg success
+			return true; 
 		}
-		return false; // msg unfortunately
+		return false; 
 	}
 
 	private function makeWhereString($arr)
 	{
 		$where = "year = {$this->db->clearString($arr['year'])}";
-
-
 		if(!empty($arr['color']))
 		{
 			$where .= " and color = {$this->db->clearString($arr['color'])}";
-		}
-		if(!empty($arr['brand']))
-		{
-			$where .= " and brand = {$this->db->clearString($arr['brand'])}";
 		}
 		if(!empty($arr['model']))
 		{
@@ -130,6 +121,4 @@ class CarShopServer
 		}
 		return $cleared;
 	}
-
-
 }
